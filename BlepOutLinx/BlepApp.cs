@@ -28,23 +28,23 @@ namespace Blep
             var argl = args?.ToList() ?? new List<string>();
             Wood.SetNewPathAndErase(Path.Combine(Directory.GetCurrentDirectory(), "BOILOG.txt"));
             Wood.WriteLine($"BOI {VersionNumber} starting {DateTime.UtcNow}");
-#if !DEBUG
-            Wood.WriteLine("Console output is disabled for the time being, sorry.");
-            goto noconsolesqm;
-#endif
-            //broken
-            if (File.Exists("showConsole.txt") || argl.Contains("-nc") || argl.Contains("--new-console"))
-            {
-                Wood.WriteLine("");
-                AllocConsole();
-                Console.WriteLine("Launching BOI with output to a new console window.");
-                Console.WriteLine("Reminder: you can always select text in console and then copy it by pressing enter. It also pauses the app.\n");
-            }
-            else if (argl.Contains("-ac") || argl.Contains("--attach-console"))
-            {
-                AttachConsole(-1);
-                Console.WriteLine("\nLaunching BOI and attempting to attach parent process console.");
-            }
+//#if !DEBUG
+//            Wood.WriteLine("Console output is disabled for the time being, sorry.");
+//            goto noconsolesqm;
+//#endif
+//            //broken
+//            if (File.Exists("showConsole.txt") || argl.Contains("-nc") || argl.Contains("--new-console"))
+//            {
+//                Wood.WriteLine("");
+//                AllocConsole();
+//                Console.WriteLine("Launching BOI with output to a new console window.");
+//                Console.WriteLine("Reminder: you can always select text in console and then copy it by pressing enter. It also pauses the app.\n");
+//            }
+//            else if (argl.Contains("-ac") || argl.Contains("--attach-console"))
+//            {
+//                AttachConsole(-1);
+//                Console.WriteLine("\nLaunching BOI and attempting to attach parent process console.");
+//            }
             noconsolesqm:
             //write the help file
             StreamWriter o = default;
@@ -74,7 +74,10 @@ namespace Blep
                     return ex is TypeLoadException;
                 };
 
-                if (!(File.Exists("tui.txt") || argl.Contains("-tui"))) goto forms;
+                bool attachRes = AttachConsole(-1);
+                if (!attachRes) Wood.WriteLine($"Attaching console failed, last error: {GetLastError()}");
+                UsingTUI = attachRes;
+                if (!attachRes) goto forms;
                 TUI.TCore.Init(
 #if !DEBUG
                     excb
@@ -91,7 +94,7 @@ namespace Blep
 #endif
                 Application.Run(Currblep);
             exit:;
-
+                FreeConsole();
             }
             catch (Exception e)
             {
@@ -107,6 +110,7 @@ namespace Blep
             Wood.Lifetime = 5;
         }
 
+        public static bool UsingTUI;
         public const string REPOADDRESS = "https://api.github.com/repos/Rain-World-Modding/BOI/releases/latest";
 
         //self updates from GH stable releases.

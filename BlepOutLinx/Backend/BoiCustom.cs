@@ -115,10 +115,15 @@ namespace Blep.Backend
                 return false;
             }
         }
-        //TODO: what the fuck is wrong with this
+
+        #region extern
+        //TODO: what the fuck is wrong with you
         [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "AllocConsole")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool AllocConsole();
+        [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "AllocConsole")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool FreeConsole();
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool AttachConsole([MarshalAs(UnmanagedType.I4)]int dwProcessId);
@@ -127,5 +132,7 @@ namespace Blep.Backend
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Error)]
         public static extern int GetLastError();
+
+        #endregion;
     }
 }

@@ -47,7 +47,7 @@ namespace Blep.Backend
         public static void Write(object o)
         {
             
-            Console.Write(o);
+            if (!BlepApp.UsingTUI) Console.Write(o);
             SpinUp();
             WriteQueue.Enqueue(o ?? "null");
 
