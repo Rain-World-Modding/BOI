@@ -63,19 +63,35 @@ namespace Blep
             //enter the form
             try
             {
-                BlepOut Currblep = new BlepOut();
-#if !DEBUG
-                Application.ThreadException += (sender, e) => {
+                Func<Exception, bool> excb = (ex) =>
+                {
                     var oind = Wood.IndentLevel;
                     Wood.IndentLevel = 0;
                     Wood.WriteLine("\n<--------------------->\nUNHANDLED EXCEPTION IN APPLICATION LOOP");
-                    Wood.WriteLine(e.Exception);
+                    Wood.WriteLine(ex);
                     Wood.WriteLine("<--------------------->\n");
                     Wood.IndentLevel = oind;
-                    if (e.Exception is TypeLoadException) Currblep.Close();
+                    return ex is TypeLoadException;
+                };
+
+                if (!(File.Exists("tui.txt") || argl.Contains("-tui"))) goto forms;
+                TUI.TCore.Init(
+#if !DEBUG
+                    excb
+#endif
+                    );
+                goto exit;
+
+            forms:
+                BlepOut Currblep = new BlepOut();
+#if !DEBUG
+                Application.ThreadException += (sender, e) => {
+                    if (excb(e.Exception)) Currblep.Close();
                 };
 #endif
                 Application.Run(Currblep);
+            exit:;
+
             }
             catch (Exception e)
             {

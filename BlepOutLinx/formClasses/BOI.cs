@@ -144,7 +144,7 @@ namespace Blep
         {
             Modlist.Items.Clear();
             Modlist.ItemCheck -= Modlist_ItemCheck;
-            foreach (var mod in Donkey.cargo) { if (mod.SelectedByMask()) { Modlist.Items.Add(mod); Modlist.SetItemChecked(Modlist.Items.Count - 1, mod.Enabled); } }
+            foreach (var mod in AllSelectedMods()) { { Modlist.Items.Add(mod); Modlist.SetItemChecked(Modlist.Items.Count - 1, mod.Enabled); } }
             Modlist.ItemCheck += Modlist_ItemCheck;
         }
 

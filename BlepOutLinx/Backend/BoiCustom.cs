@@ -115,12 +115,17 @@ namespace Blep.Backend
                 return false;
             }
         }
-        //TODO: figure out why alloc no work
+        //TODO: what the fuck is wrong with this
         [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "AllocConsole")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool AllocConsole();
         [DllImport("kernel32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool AttachConsole([MarshalAs(UnmanagedType.I4)]int dwProcessId);
+
+
+        [DllImport("kernel32.dll")]
+        [return: MarshalAs(UnmanagedType.Error)]
+        public static extern int GetLastError();
     }
 }
