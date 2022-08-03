@@ -2,6 +2,8 @@
 using System.IO;
 using System.Windows.Forms;
 
+using static Blep.Backend.Core;
+
 namespace Blep
 {
     public partial class PartYeet : Form
@@ -19,8 +21,8 @@ namespace Blep
         {
             try
             {
-                var manf = Path.Combine(BlepOut.RootPath, "RainWorld_Data", "Managed");
-                var manbuf = Path.Combine(BlepOut.RootPath, "RainWorld_Data", "Managed_backup");
+                var manf = Path.Combine(RootPath, "RainWorld_Data", "Managed");
+                var manbuf = Path.Combine(RootPath, "RainWorld_Data", "Managed_backup");
                 Directory.Delete(manf);
                 Directory.Move(manbuf, manf);
                 label2.Text = "Partiality Launcher successfully uninstalled, you're free to go!";

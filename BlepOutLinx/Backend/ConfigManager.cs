@@ -5,6 +5,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
+using static Blep.Backend.Core;
+
 namespace Blep.Backend
 {
 
@@ -16,7 +18,7 @@ namespace Blep.Backend
             try
             {
                 confjo = null;
-                string tfcont = File.ReadAllText(BlepOut.cfgpath);
+                string tfcont = File.ReadAllText(cfgpath);
                 confjo = JObject.Parse(tfcont);
             }
             catch (JsonException joe)
@@ -34,8 +36,8 @@ namespace Blep.Backend
         {
             try
             {
-                Wood.WriteLine($"Saving config: {BlepOut.cfgpath}");
-                File.WriteAllText(BlepOut.cfgpath, confjo.ToString());
+                Wood.WriteLine($"Saving config: {cfgpath}");
+                File.WriteAllText(cfgpath, confjo.ToString());
             }
             catch (NullReferenceException)
             {

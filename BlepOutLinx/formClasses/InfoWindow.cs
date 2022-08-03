@@ -1,6 +1,8 @@
 ﻿using System.Windows.Forms;
 using System;
 
+using static Blep.Backend.Core;
+
 namespace Blep
 {
     [Obsolete]
@@ -11,7 +13,7 @@ namespace Blep
             InitializeComponent();
             TabControl.TabPages[0].VerticalScroll.Visible = true;
             TabControl.TabPages[0].VerticalScroll.Enabled = true;
-            label2.Text = label2.Text.Replace("<VersionNumber>", BlepOut.VersionNumber);
+            label2.Text = label2.Text.Replace("<VersionNumber>", VersionNumber);
         }
         private int hmm = 0;
 

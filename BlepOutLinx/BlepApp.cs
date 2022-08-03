@@ -9,6 +9,7 @@ using System.Net.Http;
 using Blep.Backend;
 
 using static Blep.Backend.BoiCustom;
+using static Blep.Backend.Core;
 
 namespace Blep
 {
@@ -26,7 +27,7 @@ namespace Blep
             Application.SetCompatibleTextRenderingDefault(false);
             var argl = args?.ToList() ?? new List<string>();
             Wood.SetNewPathAndErase(Path.Combine(Directory.GetCurrentDirectory(), "BOILOG.txt"));
-            Wood.WriteLine($"BOI {BlepOut.VersionNumber} starting {DateTime.UtcNow}");
+            Wood.WriteLine($"BOI {VersionNumber} starting {DateTime.UtcNow}");
             Wood.WriteLine("Console output is disabled for the time being, sorry.");
 #if !DEBUG
             goto noconsolesqm;

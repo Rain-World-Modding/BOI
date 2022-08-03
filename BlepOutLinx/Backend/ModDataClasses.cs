@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
 
+using static Blep.Backend.Core;
 
 namespace Blep.Backend
 {
@@ -486,7 +487,7 @@ namespace Blep.Backend
     public static class EDTCFGDATA
     {
         public static edtSetup cfg;
-        public static string edtConfigPath => Path.Combine(BlepOut.RootPath, "edtSetup.json");
+        public static string edtConfigPath => Path.Combine(RootPath, "edtSetup.json");
         public static bool edtConfigExists => File.Exists(edtConfigPath);
         public static void loadJo()
         {

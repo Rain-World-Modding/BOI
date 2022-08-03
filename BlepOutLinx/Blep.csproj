@@ -110,6 +110,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\Core.cs" />
     <Compile Include="Backend\Donkey.cs" />
     <Compile Include="Backend\VoiceOfBees.cs" />
     <Compile Include="Backend\BackupManager.cs" />

@@ -7,17 +7,19 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
+using static Blep.Backend.Core;
+
 namespace Blep.Backend
 {
     public static class BackupManager
     {
-        public static string BackupFolderPath => Path.Combine(BlepOut.BOIpath, "Backups");
+        public static string BackupFolderPath => Path.Combine(BOIpath, "Backups");
         /// <summary>
         /// Loads the list of backups located in <see cref="BackupFolderPath"/>.
         /// </summary>
         public static void LoadBackupList()
         {
-            bool flag = BlepOut.IsMyPathCorrect;
+            bool flag = IsMyPathCorrect;
             if (!Directory.Exists(BackupFolderPath)) Directory.CreateDirectory(BackupFolderPath);
             if (flag)
             {
@@ -36,7 +38,7 @@ namespace Blep.Backend
         /// </summary>
         public static void StashActiveSave()
         {
-            if (!BlepOut.IsMyPathCorrect) return;
+            if (!IsMyPathCorrect) return;
             UserDataStateRelay udsr = ActiveSave ?? new UserDataStateRelay(UserDataFolder);
             AllBackups.Add(udsr.CloneTo(PathForNewBackup));
         }
@@ -125,7 +127,7 @@ namespace Blep.Backend
         /// <summary>
         /// Path to active save.
         /// </summary>
-        public static string UserDataFolder => Path.Combine(BlepOut.RootPath, "UserData");
+        public static string UserDataFolder => Path.Combine(RootPath, "UserData");
 
         public static UserDataStateRelay ActiveSave { get; set; }
         public static List<UserDataStateRelay> AllBackups { get { if (_abu == null) _abu = new List<UserDataStateRelay>(); return _abu; } set { _abu = value; } }

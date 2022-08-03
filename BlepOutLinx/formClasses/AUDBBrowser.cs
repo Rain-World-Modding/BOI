@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.Threading;
 using Blep.Backend;
 
+using static Blep.Backend.Core;
 
 namespace Blep
 {
@@ -39,8 +40,8 @@ namespace Blep
 
         public void DrawBoxes()
         {
-            buttonDownload.Enabled = BlepOut.IsMyPathCorrect;
-            btn_InstallBep.Enabled = BlepOut.currentStructureState.HasFlag(BlepOut.FolderStructureState.GameFound);
+            buttonDownload.Enabled = IsMyPathCorrect;
+            btn_InstallBep.Enabled = currentStructureState.HasFlag(FolderStructureState.GameFound);
             var currEntry = listAUDBEntries.SelectedItem as VoiceOfBees.AUDBEntryRelay;
 
             labelEntryAuthors.Text = currEntry?.author ?? string.Empty;
@@ -62,13 +63,13 @@ namespace Blep
             if (currEntry != null)
             {
                 labelOperationStatus.Text = $"Downloading {currEntry.name} and dependencies...";
-                labelOperationStatus.Text = (currEntry.TryDownload(BlepOut.ModFolder))? $"Downloaded {currEntry.name}." : $"Could not download {currEntry.name}! Check BOILOG.txt for details";
+                labelOperationStatus.Text = (currEntry.TryDownload(ModFolder))? $"Downloaded {currEntry.name}." : $"Could not download {currEntry.name}! Check BOILOG.txt for details";
             }
         }
 
         private void btn_InstallBep_Click(object sender, EventArgs e)
         {
-            int errc = VoiceOfBees.DownloadBepAsync(BlepOut.RootPath);
+            int errc = VoiceOfBees.DownloadBepAsync(RootPath);
             labelOperationStatus.Text = (errc == 0) ? "BepInEx installed successfully" : $"{errc} error(s) encountered while installing!";
         }
     }

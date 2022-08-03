@@ -6,6 +6,8 @@ using System.IO;
 using System.Windows.Forms;
 using Blep.Backend;
 
+using static Blep.Backend.Core;
+
 namespace Blep
 {
     public partial class Options : Form
@@ -134,11 +136,11 @@ namespace Blep
             CompileBackupList(BackupSearchBar.Text);
             FillBars();
         }
-        private static string CRSpath => Path.Combine(BlepOut.ModFolder, @"CustomResources");
+        private static string CRSpath => Path.Combine(ModFolder, @"CustomResources");
         private void Options_Activated(object sender, EventArgs e)
         {
             //this.Enabled = mf.Enabled;
-            if (BlepOut.IsMyPathCorrect)
+            if (IsMyPathCorrect)
             {
                 //StatusUpdate();
                 FetchStuff();
@@ -241,14 +243,14 @@ namespace Blep
             FetchStuff();
         }
 
-        private string langinplugins => Path.Combine(BlepOut.PluginsFolder, "Language");
-        private string langinmods => Path.Combine(BlepOut.ModFolder + "Language");
+        private string langinplugins => Path.Combine(PluginsFolder, "Language");
+        private string langinmods => Path.Combine(ModFolder + "Language");
 
         //backups
         
         private void BackupRelatedBtnClick(object sender, EventArgs e)
         {
-            if (!BlepOut.IsMyPathCorrect) return;
+            if (!IsMyPathCorrect) return;
             if (ReferenceEquals(sender, btnNukeActiveSave))
             {
                 BackupManager.TryDeleteSave(BackupManager.ActiveSave);
@@ -274,7 +276,7 @@ namespace Blep
         public void CompileBackupList(string mask)
         {
             listBackups.Items.Clear();
-            if (!BlepOut.IsMyPathCorrect) return;
+            if (!IsMyPathCorrect) return;
             listBackups.Items.Add(BackupManager.ActiveSave);
             foreach (BackupManager.UserDataStateRelay udsr in BackupManager.AllBackups)
             {

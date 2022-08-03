@@ -3,6 +3,8 @@ using System.IO;
 using System.Windows.Forms;
 using Blep.Backend;
 
+using static Blep.Backend.Core;
+
 namespace Blep
 {
     public partial class MetafilePurgeSuggestion : Form
@@ -19,7 +21,7 @@ namespace Blep
         private void buttonUproot_Click(object sender, EventArgs e)
         {
             int errc = 0, succ = 0;
-            string[] modfoldercontents = Directory.GetFiles(BlepOut.ModFolder);
+            string[] modfoldercontents = Directory.GetFiles(ModFolder);
             foreach (string path in modfoldercontents)
             {
                 try

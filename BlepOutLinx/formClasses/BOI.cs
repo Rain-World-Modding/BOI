@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using System.Linq;
 using Blep.Backend;
 
+using static Blep.Backend.Core;
+
 namespace Blep
 {
     /// <summary>
@@ -26,7 +28,7 @@ namespace Blep
             firstshow = true;
             MaskModeSelect.Items.AddRange(new object[] { Maskmode.Names, Maskmode.Tags, Maskmode.NamesAndTags });
             MaskModeSelect.SelectedItem = Maskmode.NamesAndTags;
-            outrmixmods = new List<string>();
+            //outrmixmods = new List<string>();
             TagManager.ReadTagsFromFile(tagfilePath);
             BoiConfigManager.ReadConfig();
             RootPath = BoiConfigManager.TarPath;
@@ -62,7 +64,7 @@ namespace Blep
         /// </para>
         /// Also displays certain popup windows. See: <see cref="PubstuntInfoPopup"/>, <see cref="MixmodsPopup"/>
         /// </summary>
-        private void Setup()
+        internal void Setup()
         {
             Wood.WriteLine("Path valid, starting setup " + DateTime.UtcNow);
             PubstuntFound = false;
@@ -109,7 +111,7 @@ namespace Blep
         /// <summary>
         /// Creates mods folder if there isn't one; checks if there is leftover PL junk.
         /// </summary>
-        private void PrepareModsFolder()
+        internal void PrepareModsFolder()
         {
             metafiletracker = false;
             if (!Directory.Exists(ModFolder))
@@ -126,7 +128,7 @@ namespace Blep
         /// <summary>
         /// Adds all mods from <see cref="Donkey.cargo" into current modlist/>
         /// </summary>
-        private void FillModList()
+        internal void FillModList()
         {
             Modlist.Items.Clear();
             Modlist.ItemCheck -= Modlist_ItemCheck;
@@ -138,7 +140,7 @@ namespace Blep
         /// Applies search mask to visible modlist; depending on selected search mode, names and/or tags will be accounted for.
         /// </summary>
         /// <param name="mask">Mask contents.</param>
-        private void ApplyMaskToModlist(string mask)
+        internal void ApplyMaskToModlist(string mask)
         {
             Modlist.Items.Clear();
             Modlist.ItemCheck -= Modlist_ItemCheck;
@@ -151,7 +153,7 @@ namespace Blep
         /// <param name="mask">Mask text.</param>
         /// <param name="mr"><see cref="ModRelay"/> to be checked.</param>
         /// <returns></returns>
-        private bool ModSelectedByMask(string mask, ModRelay mr)
+        internal bool ModSelectedByMask(string mask, ModRelay mr)
         {
             if (mask == string.Empty) return true;
             string cmm = MaskModeSelect.Text;
@@ -169,103 +171,20 @@ namespace Blep
             return false;
         }
 
-        [Flags]
-        private enum Maskmode
-        {
-            Tags,
-            Names,
-            NamesAndTags
-        }
+        
 
-        /// <summary>
-        /// Checks if enabled mods are identical to their counterparts in active folders; if not, brings the needed side up to date.
-        /// </summary>
-        public static bool IsMyPathCorrect
-            => currentStructureState.HasFlag(FolderStructureState.BlepFound | FolderStructureState.GameFound)
-            && !currentStructureState.HasFlag(FolderStructureState.RealmFound);
-
-        /// <summary>
-        /// Gets <see cref="FolderStructureState"/> for currently selected path.
-        /// </summary>
-        public static FolderStructureState currentStructureState
-        {
-            get
-            {
-                FolderStructureState res = 0;
-                if (Directory.Exists(PluginsFolder) && Directory.Exists(PatchersFolder))
-                {
-                    res |= FolderStructureState.BlepFound;
-                    if (File.Exists(Path.Combine(PatchersFolder, "Realm.dll"))) res |= FolderStructureState.RealmFound;
-                }
-                if (Directory.Exists(Path.Combine(RootPath, "RainWorld_Data"))) res |= FolderStructureState.GameFound;
-                
-                return res;
-            }
-        }
-
-        [Flags]
-        public enum FolderStructureState
-        {
-            BlepFound   = 0x00000001,
-            GameFound   = 0x00000010,
-            RealmFound  = 0x00000100,
-        }
-
-        /// <summary>
-        /// Path to the game's root folder.
-        /// </summary>
-        public static string RootPath = string.Empty;
-        /// <summary>
-        /// Indicates whether modhash/modmeta files were found during setup.
-        /// </summary>
-        private static bool metafiletracker;
-        /// <summary>
-        /// State tracker for path select dialog and button; janky, definitely subject to change.
-        /// </summary>
-        private static bool TSbtnMode = true;
         /// <summary>
         /// <see cref="Options"/> form instance.
         /// </summary>
-        private Options opwin;
-        /// <summary>
-        /// Returns BOI folder path.
-        /// </summary>
-        public static string BOIpath => Directory.GetCurrentDirectory();
-        /// <summary>
-        /// Returns path to BOI config file.
-        /// </summary>
-        public static string cfgpath => Path.Combine(BOIpath, "cfg.json");
-        /// <summary>
-        /// Returns path to tag data file.
-        /// </summary>
-        public static string tagfilePath => Path.Combine(BOIpath, "MODTAGS.txt");
-        /// <summary>
-        /// List of mods that have been erased during rootout.
-        /// </summary>
-        private readonly List<string> outrmixmods = new();
-        /// <summary>
-        /// Indicates whether the form is being viewed for the first time in the session.
-        /// </summary>
-        private bool firstshow;
-        /// <summary>
-        /// Setup tracker for pubstunt.
-        /// </summary>
-        private bool PubstuntFound;
-        /// <summary>
-        /// Setup tracker for invalid mods.
-        /// </summary>
-        private bool MixmodsFound;
-        public static string ModFolder => Path.Combine(RootPath, "Mods");
-        public static string PluginsFolder => Path.Combine(RootPath, "BepInEx", "plugins");
-        public static string mmFolder => Path.Combine(RootPath, "BepInEx", "monomod");
-        public static string PatchersFolder => Path.Combine(RootPath, "BepInEx", "patchers");
+        internal Options opwin;
+        
 
         /// <summary>
         /// Ran when the user clicks path select button. <see cref="TSbtnMode"/> is used here.
         /// </summary>
         /// <param name="sender">Unused.</param>
         /// <param name="e">Unused.</param>
-        private void buttonSelectPath_Click(object sender, EventArgs e)
+        internal void buttonSelectPath_Click(object sender, EventArgs e)
         {
             if (TSbtnMode)
             {
@@ -288,7 +207,7 @@ namespace Blep
         /// </summary>
         /// <param name="sender">Unused.</param>
         /// <param name="e">Unused.</param>
-        private void BlepOut_Activated(object sender, EventArgs e)
+        internal void BlepOut_Activated(object sender, EventArgs e)
         {
             UpdateTargetPath(RootPath);
             StatusUpdate();
@@ -296,14 +215,14 @@ namespace Blep
             buttonUprootPart.Visible = Directory.Exists(Path.Combine(RootPath, "RainWorld_Data", "Managed_backup"));
             //throw new Exception();
         }
-        private void BlepOut_Deactivate(object sender, EventArgs e)
+        internal void BlepOut_Deactivate(object sender, EventArgs e)
         {
             TagManager.SaveToFile(tagfilePath);
         }
         /// <summary>
         /// Updates the status bars.
         /// </summary>
-        private void StatusUpdate()
+        internal void StatusUpdate()
         {
             var cf = currentStructureState;
             if (cf.HasFlag(FolderStructureState.RealmFound))
@@ -349,7 +268,7 @@ namespace Blep
         /// </summary>
         /// <param name="sender">Unused.</param>
         /// <param name="e">Unused.</param>
-        private void btn_Help_Click(object sender, EventArgs e)
+        internal void btn_Help_Click(object sender, EventArgs e)
         {
             //if (iw == null || iw.IsDisposed) iw = new InfoWindow();
             //iw.Show();
@@ -368,7 +287,7 @@ namespace Blep
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void buttonUprootPart_Click(object sender, EventArgs e)
+        internal void buttonUprootPart_Click(object sender, EventArgs e)
         {
             PartYeet py = new(this);
             AddOwnedForm(py);
@@ -379,7 +298,7 @@ namespace Blep
         /// </summary>
         /// <param name="sender">Unused.</param>
         /// <param name="e">Unused.</param>
-        private void buttonClearMeta_Click(object sender, EventArgs e)
+        internal void buttonClearMeta_Click(object sender, EventArgs e)
         {
             MetafilePurgeSuggestion psg = new(this);
             AddOwnedForm(psg);
@@ -390,7 +309,7 @@ namespace Blep
         /// </summary>
         /// <param name="sender">Unused.</param>
         /// <param name="e"></param>
-        private void Modlist_ItemCheck(object sender, ItemCheckEventArgs e)
+        internal void Modlist_ItemCheck(object sender, ItemCheckEventArgs e)
         {
             var tm = Modlist.Items[e.Index] as ModRelay;
             if (Donkey.AintThisPS(tm.AssociatedModData.OrigLocation.FullName))
@@ -413,7 +332,7 @@ namespace Blep
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void BlepOut_FormClosing(object sender, FormClosingEventArgs e)
+        internal void BlepOut_FormClosing(object sender, FormClosingEventArgs e)
         {
             Wood.WriteLine("BOI shutting down. " + DateTime.UtcNow);
             BoiConfigManager.WriteConfig();
@@ -427,7 +346,7 @@ namespace Blep
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void buttonOption_Click(object sender, EventArgs e)
+        internal void buttonOption_Click(object sender, EventArgs e)
         {
             if (opwin == null || opwin.IsDisposed) opwin = new Options(this);
             opwin.Show();
@@ -437,7 +356,7 @@ namespace Blep
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Modlist_DragDrop(object sender, DragEventArgs e)
+        internal void Modlist_DragDrop(object sender, DragEventArgs e)
         {
             string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
             Wood.WriteLine($"Drag&Drop: {files.Length} files were dropped in the mod list.");
@@ -476,12 +395,12 @@ namespace Blep
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Modlist_DragEnter(object sender, DragEventArgs e)
+        internal void Modlist_DragEnter(object sender, DragEventArgs e)
         {
             // if we're about to drop a file, indicate a copy to allow the drop
             if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
         }
-        private void textBoxMaskInput_TextChanged(object sender, EventArgs e)
+        internal void textBoxMaskInput_TextChanged(object sender, EventArgs e)
         {
             ApplyMaskToModlist(textBox_MaskInput.Text);
         }
@@ -490,28 +409,28 @@ namespace Blep
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Modlist_SelectionChanged(object sender, EventArgs e)
+        internal void Modlist_SelectionChanged(object sender, EventArgs e)
         {
             if (Modlist.SelectedItem == null) return;
             TagInputBox.Text = TagManager.GetTagString(((ModRelay)Modlist.SelectedItem)?.AssociatedModData.DisplayedName);
         }
-        private void TagTextChanged(object sender, EventArgs e)
+        internal void TagTextChanged(object sender, EventArgs e)
         {
             if (Modlist.SelectedItem == null) return;
             TagManager.SetTagData(((ModRelay)Modlist.SelectedItem).AssociatedModData.DisplayedName, TagInputBox.Text);
         }
-        private void MaskModeSelect_TextChanged(object sender, EventArgs e)
+        internal void MaskModeSelect_TextChanged(object sender, EventArgs e)
         {
             ApplyMaskToModlist(textBox_MaskInput.Text);
         }
-        private void selected_on(object sender, EventArgs e)
+        internal void selected_on(object sender, EventArgs e)
         {
             Donkey.DeliverRangeAsync(allSelected()).Wait();
             //FillModList();
             ApplyMaskToModlist(textBox_MaskInput.Text);
         }
 
-        private void selected_off(object sender, EventArgs e)
+        internal void selected_off(object sender, EventArgs e)
         {
             Donkey.RetractRangeAsync(allSelected()).Wait();
             //FillModList();
@@ -522,23 +441,14 @@ namespace Blep
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OpenAudbBrowser(object sender, EventArgs e)
+        internal void OpenAudbBrowser(object sender, EventArgs e)
         {
             if (browser == null || browser.IsDisposed) { browser = new AUDBBrowser(); browser.Show(); }
         }
-        private AUDBBrowser browser;
+        internal AUDBBrowser browser;
 
-        public static string VersionNumber// => "0.1.7a";
-        {
-            get
-            {
-                foreach (var aat in Assembly.GetExecutingAssembly().GetCustomAttributes(false))
-                    if (aat is AssemblyInformationalVersionAttribute verA) return verA.InformationalVersion;
-                return "vUnk";
-            }
-        }
         #region meme
-        private void label5_Click(object sender, EventArgs e)
+        internal void label5_Click(object sender, EventArgs e)
         {
             var r = new Random();
             relBtnLines ??= new[]
