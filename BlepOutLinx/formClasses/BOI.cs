@@ -140,38 +140,13 @@ namespace Blep
         /// Applies search mask to visible modlist; depending on selected search mode, names and/or tags will be accounted for.
         /// </summary>
         /// <param name="mask">Mask contents.</param>
-        internal void ApplyMaskToModlist(string mask)
+        internal void ApplyMaskToModlist()
         {
             Modlist.Items.Clear();
             Modlist.ItemCheck -= Modlist_ItemCheck;
-            foreach (var mod in Donkey.cargo) { if (ModSelectedByMask(mask, mod)) { Modlist.Items.Add(mod); Modlist.SetItemChecked(Modlist.Items.Count - 1, mod.Enabled); } }
+            foreach (var mod in Donkey.cargo) { if (mod.SelectedByMask()) { Modlist.Items.Add(mod); Modlist.SetItemChecked(Modlist.Items.Count - 1, mod.Enabled); } }
             Modlist.ItemCheck += Modlist_ItemCheck;
         }
-        /// <summary>
-        /// Returns if a <see cref="ModRelay"/> is selected by a given mask.
-        /// </summary>
-        /// <param name="mask">Mask text.</param>
-        /// <param name="mr"><see cref="ModRelay"/> to be checked.</param>
-        /// <returns></returns>
-        internal bool ModSelectedByMask(string mask, ModRelay mr)
-        {
-            if (mask == string.Empty) return true;
-            string cmm = MaskModeSelect.Text;
-            if (cmm == nameof(Maskmode.Names) || cmm == nameof(Maskmode.NamesAndTags)) if (mr.ToString().ToLower().Contains(mask.ToLower())) return true;
-            if (cmm == nameof(Maskmode.NamesAndTags) || cmm == nameof(Maskmode.Tags))
-            {
-                string[] tags = TagManager.GetTagsArray(mr.AssociatedModData.DisplayedName);
-                foreach (string tag in tags)
-                {
-                    if (tag.ToLower().Contains(mask.ToLower())) return true;
-                }
-            }
-
-
-            return false;
-        }
-
-        
 
         /// <summary>
         /// <see cref="Options"/> form instance.
@@ -211,7 +186,7 @@ namespace Blep
         {
             UpdateTargetPath(RootPath);
             StatusUpdate();
-            if (IsMyPathCorrect) ApplyMaskToModlist(textBox_MaskInput.Text);
+            if (IsMyPathCorrect) ApplyMaskToModlist();
             buttonUprootPart.Visible = Directory.Exists(Path.Combine(RootPath, "RainWorld_Data", "Managed_backup"));
             //throw new Exception();
         }
@@ -402,7 +377,8 @@ namespace Blep
         }
         internal void textBoxMaskInput_TextChanged(object sender, EventArgs e)
         {
-            ApplyMaskToModlist(textBox_MaskInput.Text);
+            MASK = textBox_MaskInput.Text;
+            ApplyMaskToModlist();
         }
         /// <summary>
         /// 
@@ -421,20 +397,21 @@ namespace Blep
         }
         internal void MaskModeSelect_TextChanged(object sender, EventArgs e)
         {
-            ApplyMaskToModlist(textBox_MaskInput.Text);
+            Enum.TryParse(MaskModeSelect.Text, out CMM);
+            ApplyMaskToModlist();
         }
         internal void selected_on(object sender, EventArgs e)
         {
-            Donkey.DeliverRangeAsync(allSelected()).Wait();
+            Donkey.DeliverRangeAsync(AllSelectedModIndices()).Wait();
             //FillModList();
-            ApplyMaskToModlist(textBox_MaskInput.Text);
+            ApplyMaskToModlist();
         }
 
         internal void selected_off(object sender, EventArgs e)
         {
-            Donkey.RetractRangeAsync(allSelected()).Wait();
+            Donkey.RetractRangeAsync(AllSelectedModIndices()).Wait();
             //FillModList();
-            ApplyMaskToModlist(textBox_MaskInput.Text);
+            ApplyMaskToModlist();
         }
         /// <summary>
         /// Brings up AUDBrowser.
@@ -498,12 +475,6 @@ namespace Blep
         internal static string[] relBtnLines;
 
         #endregion
-
-        internal IEnumerable<int> allSelected()
-        {
-            foreach (ModRelay mr in Modlist.Items) yield return Donkey.cargo.IndexOf(mr);
-
-        }
 
     }
 }

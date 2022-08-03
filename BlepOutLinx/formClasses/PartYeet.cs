@@ -6,6 +6,7 @@ using static Blep.Backend.Core;
 
 namespace Blep
 {
+    //todo: old garbage, redo
     public partial class PartYeet : Form
     {
         public PartYeet(BlepOut mainform)

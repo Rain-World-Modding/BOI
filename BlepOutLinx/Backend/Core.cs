@@ -12,7 +12,14 @@ namespace Blep.Backend
     {
 
         #region statfields
-
+        /// <summary>
+        /// Mod selection mask
+        /// </summary>
+        internal static string MASK;
+        /// <summary>
+        /// Selection mask mode
+        /// </summary>
+        internal static Maskmode CMM;
 
         /// <summary>
         /// Path to the game's root folder.
@@ -94,6 +101,39 @@ namespace Blep.Backend
         public static string mmFolder => Path.Combine(RootPath, "BepInEx", "monomod");
         public static string PatchersFolder => Path.Combine(RootPath, "BepInEx", "patchers");
 
+        #endregion
+
+        #region carriedMethods
+        /// <summary>
+        /// Returns if a <see cref="ModRelay"/> is selected by a given mask.
+        /// </summary>
+        /// <param name="mask">Mask text.</param>
+        /// <param name="mr"><see cref="ModRelay"/> to be checked.</param>
+        /// <returns></returns>
+        internal static bool SelectedByMask(this ModRelay mr)
+        {
+            if (string.IsNullOrEmpty(MASK)) return true;
+            //string cmm = MaskModeSelect.Text;
+            if (CMM == Maskmode.Names || CMM == Maskmode.NamesAndTags) if (mr.ToString().ToLower().Contains(MASK.ToLower())) return true;
+            if (CMM == Maskmode.NamesAndTags || CMM == Maskmode.Tags)
+            {
+                string[] tags = TagManager.GetTagsArray(mr.AssociatedModData.DisplayedName);
+                foreach (string tag in tags)
+                {
+                    if (tag.ToLower().Contains(MASK.ToLower())) return true;
+                }
+            }
+            return false;
+        }
+
+        internal static IEnumerable<ModRelay> AllSelectedMods()
+        {
+            foreach (ModRelay mr in Donkey.cargo) if (mr.SelectedByMask()) yield return mr;
+        }
+        internal static IEnumerable<int> AllSelectedModIndices()
+        {
+            return AllSelectedMods().Select(mr => Donkey.cargo.IndexOf(mr));
+        }
         #endregion
 
         #region enums

@@ -28,8 +28,8 @@ namespace Blep
             var argl = args?.ToList() ?? new List<string>();
             Wood.SetNewPathAndErase(Path.Combine(Directory.GetCurrentDirectory(), "BOILOG.txt"));
             Wood.WriteLine($"BOI {VersionNumber} starting {DateTime.UtcNow}");
-            Wood.WriteLine("Console output is disabled for the time being, sorry.");
 #if !DEBUG
+            Wood.WriteLine("Console output is disabled for the time being, sorry.");
             goto noconsolesqm;
 #endif
             //broken
